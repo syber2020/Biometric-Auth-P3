@@ -104,16 +104,17 @@ features1.append(features_label1[0].tolist()+features_label1[1].tolist()+feature
 
 # ss = StandardScaler()
 # X = ss.fit_transform(features1)
-
+classes = {0:'Abiola',1:'Himanshu',2:'Syed'}
 X = np.reshape(features1, (1, 193,1))
 # reconstructed_model = tensorflow.keras.models.load_model("cnnspeakerRecog.h5")
-json_file = open('modelcnn.json', 'r')
+json_file = open('modelcnn3.json', 'r')
 loaded_model_json = json_file.read()
 json_file.close()
 loaded_model = model_from_json(loaded_model_json)
 # load weights into new model
-loaded_model.load_weights("modelcnn.h5")
+loaded_model.load_weights("modelcnn3.h5")
 print("Loaded model from disk")
 loaded_model.compile(loss='sparse_categorical_crossentropy', optimizer=opt,metrics=['accuracy'])
-preds = modelcnn.predict_classes(X)
+preds = loaded_model.predict_classes(X)[0]
+preds = classes[preds]
 print("Predicted Speaker: ",preds)
