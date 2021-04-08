@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'records',
+    'userlogs',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -78,7 +79,7 @@ WSGI_APPLICATION = 'faceRecog.wsgi.application'
 DATABASES = {
     'default':{
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mydb',
+        'NAME': 'django_project',
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST': 'localhost',

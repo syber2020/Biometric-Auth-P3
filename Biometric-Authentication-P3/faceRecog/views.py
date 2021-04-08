@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 import cv2
 import numpy as np
+from datetime import datetime
 import logging
 from sklearn.model_selection import train_test_split
 from PIL import Image
@@ -13,7 +14,8 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import pickle
-
+from userlogs.models import UserLogs
+from records.models import Records
 from scipy.io.wavfile import write
 import sounddevice as sd
 import librosa
@@ -31,13 +33,42 @@ from tensorflow.keras.models import model_from_json
 from tensorflow.keras import regularizers
 import tensorflow
 
-
+from datetime import date
 import tkinter as tk
+from datetime import timedelta
+from django.utils import timezone
 
 from settings import BASE_DIR
 # Create your views here.
 def index(request):
-    return render(request, 'index.html')
+    today = date.today()
+    some_day_last_week = timezone.now().date() - timedelta(days=7)
+    recent_users= list(UserLogs.objects.order_by('login_time')[0:6])
+    user_logins = list(UserLogs.objects.all())
+    today_logins= list(UserLogs.objects.filter(login_time__startswith=today))
+    week_logins= list(UserLogs.objects.filter(login_time__gte=some_day_last_week))
+    total_count = UserLogs.objects.all().count()
+    success_count=UserLogs.objects.filter(login_status='Success').count()
+    undetected_count = UserLogs.objects.filter(login_status='User Undetected').count()
+    imper_count=total_count-(success_count+undetected_count)
+    success_per = (success_count/total_count)*100
+    undetected_per = (undetected_count / total_count) * 100
+    imper_per = (imper_count/total_count)*100
+    context = {
+        'success_per': success_per,
+        'imper_per': imper_per,
+        'undetected_per': undetected_per,
+        'total_count': total_count,
+        'imper_count': imper_count,
+        'success_count': success_count,
+        'undetected_count': undetected_count,
+        'recent_users': recent_users,
+        'today_logins': today_logins,
+        'week_logins': week_logins,
+        'all_user_logins': user_logins,
+    }
+
+    return render(request, 'dashboard.html', context=context)
 def errorImg(request):
     return render(request, 'error.html')
 
@@ -121,6 +152,8 @@ def detect(request):
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     recognizer = cv2.face.LBPHFaceRecognizer_create()
     recognizer.read("trainer.yml")
+    user_name = request.user.username
+    conf = 0
     user_id = "Unknown"
     labels = {"person_name": 1}
     with open("label.pickle", 'rb') as f:
@@ -163,16 +196,28 @@ def detect(request):
             cv2.rectangle(frame, (x, y), (width, height), color, stroke)
         cv2.imshow('frame', frame)
         # cv2.imshow('gray', gray)
-
+        userlog = UserLogs()
+        user_record=Records.objects.get(id=user_name)
+        userlog.user_id = user_name
+        userlog.user = user_record
+        userlog.confidence_score = str(conf)
+        userlog.login_time = datetime.now()
         k = cv2.waitKey(30) & 0xff
         if k == 27:  # press 'ESC' to quit
+            userlog.login_status = 'User Undetected'
+            userlog.save()
             break
         elif (user_id != "Unknown"):
             cv2.waitKey(1000)
             cap.release()
             cv2.destroyAllWindows()
+            if (user_name != name):
+                userlog.login_status = 'User Identified as ' + name + ''
+            else:
+                userlog.login_status = 'Identified genuine user'
             id = '/records/details/'+name
             print("Before routing: " + id)
+            userlog.save()
             return redirect(id)
     cap.release()
     cv2.destroyAllWindows()
