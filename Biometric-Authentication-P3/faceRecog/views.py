@@ -14,6 +14,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import pickle
+from django.template import Context, Template
 from userlogs.models import UserLogs
 from records.models import Records
 from scipy.io.wavfile import write
@@ -40,7 +41,7 @@ from django.utils import timezone
 
 from settings import BASE_DIR
 # Create your views here.
-def index(request):
+def admindashboard(request):
     today = date.today()
     some_day_last_week = timezone.now().date() - timedelta(days=7)
     recent_users= list(UserLogs.objects.order_by('login_time')[0:6])
@@ -55,9 +56,9 @@ def index(request):
     undetected_per = (undetected_count / total_count) * 100
     imper_per = (imper_count/total_count)*100
     context = {
-        'success_per': success_per,
-        'imper_per': imper_per,
-        'undetected_per': undetected_per,
+        'success_per': round(success_per),
+        'imper_per': round(imper_per),
+        'undetected_per': round(undetected_per),
         'total_count': total_count,
         'imper_count': imper_count,
         'success_count': success_count,
@@ -69,6 +70,16 @@ def index(request):
     }
 
     return render(request, 'dashboard.html', context=context)
+
+
+def index(request,username):
+    username = str(username)
+    context = {
+        'hello': 'hello',
+        'username': username,
+    }
+    return render(request, 'index.html', context=context)
+
 def errorImg(request):
     return render(request, 'error.html')
 
@@ -148,11 +159,11 @@ def trainer(request):
     cv2.destroyAllWindows()
     return redirect('/')
 
-def detect(request):
+def detect(request,username):
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     recognizer = cv2.face.LBPHFaceRecognizer_create()
     recognizer.read("trainer.yml")
-    user_name = request.user.username
+    user_name = str(username)
     conf = 0
     user_id = "Unknown"
     labels = {"person_name": 1}
@@ -214,7 +225,7 @@ def detect(request):
             if (user_name != name):
                 userlog.login_status = 'User Identified as ' + name + ''
             else:
-                userlog.login_status = 'Identified genuine user'
+                userlog.login_status = 'Success'
             id = '/records/details/'+name
             print("Before routing: " + id)
             userlog.save()
