@@ -16,11 +16,12 @@ import matplotlib.pyplot as plt
 import pickle
 from django.template import Context, Template
 from userlogs.models import UserLogs
+from emp_resource.models import EmpResource
 from records.models import Records
 from scipy.io.wavfile import write
 import sounddevice as sd
 import librosa
-
+from project_logs.models import ProjectLogs
 from tensorflow.keras.layers import Conv1D, MaxPooling1D
 from tensorflow.keras.layers import Flatten, Dropout, Activation
 from tensorflow.keras.utils import to_categorical
@@ -70,6 +71,41 @@ def admindashboard(request):
     }
 
     return render(request, 'dashboard.html', context=context)
+
+def empdashboard(request):
+    today = date.today()
+    some_day_last_week = timezone.now().date() - timedelta(days=7)
+    recent_projects= list(ProjectLogs.objects.all())
+    emp_resource = list(EmpResource.objects.all())
+    recent_users= list(UserLogs.objects.order_by('login_time')[0:6])
+    user_logins = list(UserLogs.objects.all())
+    today_logins= list(UserLogs.objects.filter(login_time__startswith=today))
+    week_logins= list(UserLogs.objects.filter(login_time__gte=some_day_last_week))
+    total_count = UserLogs.objects.all().count()
+    success_count=UserLogs.objects.filter(login_status='Success').count()
+    undetected_count = UserLogs.objects.filter(login_status='User Undetected').count()
+    imper_count=total_count-(success_count+undetected_count)
+    success_per = (success_count/total_count)*100
+    undetected_per = (undetected_count / total_count) * 100
+    imper_per = (imper_count/total_count)*100
+    context = {
+        'success_per': round(success_per),
+        'imper_per': round(imper_per),
+        'undetected_per': round(undetected_per),
+        'total_count': total_count,
+        'imper_count': imper_count,
+        'success_count': success_count,
+        'undetected_count': undetected_count,
+        'recent_users': recent_users,
+        'recent_projects': recent_projects,
+        'emp_resource': emp_resource,
+        'today_logins': today_logins,
+        'week_logins': week_logins,
+        'all_user_logins': user_logins,
+
+    }
+
+    return render(request, 'dashboardemp.html', context=context)
 
 
 def index(request,username):
@@ -244,7 +280,7 @@ def face_extractor(img):
     gray = cv2.cvtColor(img,cv2.COLOR_RGBA2RGB)
     faces = face_classifier.detectMultiScale(img, 1.3, 5)
 
-    if faces is ():
+    if faces ():
         return None
     # Crop all faces found
     for (x,y,w,h) in faces:

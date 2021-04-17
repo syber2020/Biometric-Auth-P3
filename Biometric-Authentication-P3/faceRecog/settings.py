@@ -39,7 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crispy_forms'
+    'crispy_forms',
+    'project_logs',
+    'emp_resource'
+
 ]
 
 MIDDLEWARE = [
@@ -79,7 +82,7 @@ WSGI_APPLICATION = 'faceRecog.wsgi.application'
 DATABASES = {
     'default':{
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_project',
+        'NAME': 'mydb',
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST': 'localhost',
