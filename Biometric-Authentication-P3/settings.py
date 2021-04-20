@@ -22,7 +22,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'voice-bot'
+    'voice-bot',
+    'import_export',
+    'dbbackup'
+    
 ]
 
 MIDDLEWARE = [
@@ -64,7 +67,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mydb',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'sqltesting123',
         'HOST': 'localhost',
         'PORT': '3306'
     }
@@ -112,3 +115,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     './static/',
 ]
+IMPORT_EXPORT_USE_TRANSACTIONS = True
+
+
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': '/var/backups'}

@@ -82,20 +82,20 @@ def empdashboard(request):
     today_logins= list(UserLogs.objects.filter(login_time__startswith=today))
     week_logins= list(UserLogs.objects.filter(login_time__gte=some_day_last_week))
     total_count = UserLogs.objects.all().count()
-    success_count=UserLogs.objects.filter(login_status='Success').count()
-    undetected_count = UserLogs.objects.filter(login_status='User Undetected').count()
-    imper_count=total_count-(success_count+undetected_count)
-    success_per = (success_count/total_count)*100
-    undetected_per = (undetected_count / total_count) * 100
-    imper_per = (imper_count/total_count)*100
+    # success_count=ProjectLogs.objects.filter(Status='Success').count()
+    # undetected_count = ProjectLogs.objects.filter(login_status='Pending').count()
+    # imper_count=total_count-(success_count+undetected_count)
+    # success_per = (success_count/total_count)*100
+    # undetected_per = (undetected_count / total_count) * 100
+    # imper_per = (imper_count/total_count)*100
     context = {
-        'success_per': round(success_per),
-        'imper_per': round(imper_per),
-        'undetected_per': round(undetected_per),
-        'total_count': total_count,
-        'imper_count': imper_count,
-        'success_count': success_count,
-        'undetected_count': undetected_count,
+        # 'success_per': round(success_per),
+        # 'imper_per': round(imper_per),
+        # 'undetected_per': round(undetected_per),
+        # 'total_count': total_count,
+        # 'imper_count': imper_count,
+        # 'success_count': success_count,
+        # 'undetected_count': undetected_count,
         'recent_users': recent_users,
         'recent_projects': recent_projects,
         'emp_resource': emp_resource,
@@ -280,7 +280,7 @@ def face_extractor(img):
     gray = cv2.cvtColor(img,cv2.COLOR_RGBA2RGB)
     faces = face_classifier.detectMultiScale(img, 1.3, 5)
 
-    if faces ():
+    if faces.size == 0:
         return None
     # Crop all faces found
     for (x,y,w,h) in faces:
@@ -296,7 +296,7 @@ def capture(request):
     count = 0
     new_dir ="test"
     #new_dir = gui_input("Get Folder Name")
-    parent_dir = "/Users/Syed/UNT/SPRING2021/5214/vandana/Video-Auth-P2/images/"
+    parent_dir = "D:/NEW_PYTHON_PROG/newTEST/Biometric-Auth-P3-master/Biometric-Authentication-P3/images"
     new_path = os.path.join(parent_dir, new_dir)
     os.mkdir(new_path)
 

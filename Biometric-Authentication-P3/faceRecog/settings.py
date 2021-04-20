@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'project_logs',
-    'emp_resource'
+    'emp_resource',
+    'import_export',
+    'dbbackup'
 
 ]
 
@@ -84,7 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mydb',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'sqltesting123',
         'HOST': 'localhost',
         'PORT': '3306'
     }
@@ -133,3 +135,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     './static/',
 ]
+IMPORT_EXPORT_USE_TRANSACTIONS = True
+
+
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': '/var/backups'}

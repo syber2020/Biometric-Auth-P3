@@ -18,7 +18,7 @@ box-shadow:         0px 0px 14px 0px rgba(50, 50, 50, 0.5);">
         <div class="col-md-12">
           <div class="row">
             <div class="col-md-12" style="text-align:center">
-              <form method="post">
+              <!-- <form method="post">
               {% csrf_token %}
               <table>
                 <tr>
@@ -32,28 +32,35 @@ box-shadow:         0px 0px 14px 0px rgba(50, 50, 50, 0.5);">
               </table>
               <input type="submit" value="login" />
               <input type="hidden" name="next" value="{{ next }}" />
-            </form>
+            </form> -->
               <h3><b>Welcome  </b><b>{{record.first_name}} {{record.last_name}}</b></h3>
               <h5><b>Designation: </b> {{record.occupation}} </h5>
               <h5><b>Date Recorded in System: </b> {{record.recorded_at}}</h5>
 
-             <!-- <h2>Login With User ID and Password</h2> -->
-             <button>Admin Dashboard </button>
-             <button>Employee Dashboard </button>
 
+             <div class="col-md-12" style="margin-top:2em;color:#d10244">
+               <center><a href="/admindashboard" class="btn btn-warning" style="background-color: #42b72a;border-color: #42b72a;"><i class="fa fa-chevron-left" aria-hidden="true"></i> Admin Dashboard</a></center>
+             </div>
 
-
+             <div class="col-md-12" style="margin-top:2em;color:#d10244">
+               <center><a href="/empdashboard" class="btn btn-warning" style="background-color: #42b72a;border-color: #42b72a;"><i class="fa fa-chevron-left" aria-hidden="true"></i> Employee Dashbaord</a></center>
+             </div>
+             <div>
+               <df-messenger
+  df-cx="true"
+  location="us-central1"
+  chat-title="Assstant"
+  agent-id="df2b93a7-db91-4a47-befb-c4bbb3bc0daa"
+  language-code="en"
+></df-messenger>
+             </div>             
             </div>
           </div>
-        </div>
-
-
-        <div class="col-md-12" style="margin-top:2em;color:#d10244">
-          <center><a href="/" class="btn btn-warning" style="background-color: #42b72a;border-color: #42b72a;"><i class="fa fa-chevron-left" aria-hidden="true"></i> Home</a></center>
         </div>
       </div>
     </div>
   </div>
+
 </div>
 
 
